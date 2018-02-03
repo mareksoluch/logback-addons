@@ -1,0 +1,34 @@
+<configuration debug="true" scan="true" scanPeriod="15 seconds">
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <provider class="pl.marko.logback.composite.loggingevent.MdcJsonArrayProvider">
+                    <arrayFieldName>arraKey</arrayFieldName>
+                </provider>
+                <provider class="pl.marko.logback.composite.loggingevent.MdcJsonNestedObjectProvider"/>
+                <provider class="net.logstash.logback.composite.ContextJsonProvider"/>
+                <pattern>
+                    <pattern>
+                        {
+                        "@timestamp": "%date{ISO8601}",
+                        "message": "%message",
+                        "logger": "%logger",
+                        "thread": "%thread",
+                        "level": "%level",
+                        "appId": "some_app_id"
+                        }
+                    </pattern>
+                </pattern>
+                <stackTrace/>
+            </providers>
+        </encoder>
+    </appender>
+
+    <root>
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <root level="DEBUG"/>
+
+</configuration>
