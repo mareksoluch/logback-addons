@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toMap;
 
 public class MdcJsonNestedObjectProvider extends AbstractMdcJsonProvider {
 
@@ -22,13 +22,13 @@ public class MdcJsonNestedObjectProvider extends AbstractMdcJsonProvider {
 
         Map<String, LinkedList<String>> nestedObjectProperties = properties.keySet().stream()
                 .filter(key -> key.contains(NESTED_OBJECT_SEPARATOR))
-                .collect(Collectors.toMap(key -> key, key -> new LinkedList<>(asList(key.split(NESTED_OBJECT_SEPARATOR_REGEX)))));
+                .collect(toMap(key -> key, key -> new LinkedList<>(asList(key.split(NESTED_OBJECT_SEPARATOR_REGEX)))));
 
         return groupByPath(nestedObjectProperties);
     }
 
     private TreeNode groupByPath(Map<String, LinkedList<String>> nestedObjectProperties) {
-        TreeNode root = new TreeNode(null, null);
+        TreeNode root = new TreeNode(null);
         nestedObjectProperties.forEach((pathString,pathList) -> buildTree(root, pathString, pathList));
         return root;
     }
@@ -46,7 +46,7 @@ public class MdcJsonNestedObjectProvider extends AbstractMdcJsonProvider {
             if (tree.children.containsKey(head)) {
                 buildTree(tree.children.get(head), pathString, tail);
             } else {
-                TreeNode child = new TreeNode(head, pathString);
+                TreeNode child = new TreeNode(pathString);
                 tree.children.put(head, child);
                 buildTree(child, pathString, tail);
             }
@@ -58,7 +58,6 @@ public class MdcJsonNestedObjectProvider extends AbstractMdcJsonProvider {
         for (Map.Entry<String, TreeNode> child : children.entrySet()) {
             String propertyKey = child.getKey();
             TreeNode childNode = child.getValue();
-            String fullPath = childNode.fullPath;
             if(!childNode.children.isEmpty()) {
                 generator.writeFieldName(propertyKey);
                 generator.writeStartObject();
@@ -66,7 +65,7 @@ public class MdcJsonNestedObjectProvider extends AbstractMdcJsonProvider {
                 generator.writeEndObject();
             } else {
                 generator.writeFieldName(propertyKey);
-                generator.writeObject(mdcProperties.get(fullPath));
+                generator.writeObject(mdcProperties.get(childNode.fullPath));
             }
         }
     }
@@ -80,13 +79,11 @@ public class MdcJsonNestedObjectProvider extends AbstractMdcJsonProvider {
     }
 
 
-    private static class TreeNode {
-        String name;
-        Map<String, TreeNode> children = new HashMap<>();
-        String fullPath;
+    private class TreeNode {
+        private final Map<String, TreeNode> children = new HashMap<>();
+        private final String fullPath;
 
-        TreeNode(String name, String fullPath) {
-            this.name = name;
+        TreeNode(String fullPath) {
             this.fullPath = fullPath;
         }
     }

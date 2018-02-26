@@ -11,14 +11,16 @@ import static java.util.Collections.singletonList;
 public class MdcJsonArrayProvider extends AbstractMdcJsonProvider {
 
     private String arraySeparator = ",";
-    private List<String> arrayFieldNames;
+    private List<String> arrayFieldNames = new ArrayList<>();
 
     @Override
     void writeProperties(JsonGenerator generator, Map<String, String> mdcProperties) throws IOException {
         for (Map.Entry<String, String> entry : mdcProperties.entrySet()) {
-            if (entry.getKey() != null && entry.getValue() != null) {
-                generator.writeFieldName(entry.getKey());
-                generator.writeObject(convertToArrayIfPossible(entry.getKey(), entry.getValue()));
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if (key != null && value != null) {
+                generator.writeFieldName(key);
+                generator.writeObject(convertToArrayIfPossible(key, value));
             }
         }
     }
