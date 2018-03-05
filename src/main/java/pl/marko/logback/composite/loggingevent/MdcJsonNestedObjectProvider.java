@@ -36,6 +36,7 @@ public class MdcJsonNestedObjectProvider extends AbstractMdcJsonProvider {
     @Override
     void writeProperties(JsonGenerator generator, Map<String, String> mdcProperties) throws IOException {
         writeTree(generator, convertToNestedObjects(mdcProperties), mdcProperties);
+        generator.flush();
     }
 
 
@@ -59,13 +60,11 @@ public class MdcJsonNestedObjectProvider extends AbstractMdcJsonProvider {
             String propertyKey = child.getKey();
             TreeNode childNode = child.getValue();
             if(!childNode.children.isEmpty()) {
-                generator.writeFieldName(propertyKey);
-                generator.writeStartObject();
+                generator.writeObjectFieldStart(propertyKey);
                 writeTree(generator, childNode, mdcProperties);
                 generator.writeEndObject();
             } else {
-                generator.writeFieldName(propertyKey);
-                generator.writeObject(mdcProperties.get(childNode.fullPath));
+                generator.writeObjectField(propertyKey, mdcProperties.get(childNode.fullPath));
             }
         }
     }

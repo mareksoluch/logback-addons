@@ -3,12 +3,11 @@ package pl.marko.logback.composite.loggingevent;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.google.common.collect.ImmutableMap;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
 import java.util.Map;
@@ -20,12 +19,6 @@ import static org.mockito.Mockito.times;
 
 public class MdcJsonNestedObjectProviderShould {
 
-    private static final String SINGE_VALUE_TABLE = "singeValueTable";
-    private static final String MULTI_VALUE_TABLE = "multiValueTable";
-    private static final String NOT_CONFIGURED_PROPERTY = "notConfiguredProperty";
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
-
     private MdcJsonNestedObjectProvider provider = new MdcJsonNestedObjectProvider();
 
     @Mock
@@ -33,6 +26,12 @@ public class MdcJsonNestedObjectProviderShould {
 
     @Mock
     private ILoggingEvent event;
+
+    @BeforeEach
+    public void setup(){
+        MockitoAnnotations.initMocks(this);
+    }
+
 
     @Test public void
     writeSimpleNestedObject() throws IOException {
@@ -50,7 +49,7 @@ public class MdcJsonNestedObjectProviderShould {
     }
 
     @Test public void
-    writeNestedObject1() throws IOException {
+    writeNestedObject() throws IOException {
         // given
         Map<String, String> mdcProperties = ImmutableMap.of(
                 "a.b", "value1",
@@ -71,7 +70,7 @@ public class MdcJsonNestedObjectProviderShould {
     }
 
     @Test public void
-    writeNestedObject2() throws IOException {
+    writeNestedObjectWithDifferentDepth() throws IOException {
         // given
         Map<String, String> mdcProperties = ImmutableMap.of(
                 "a.b", "value1",

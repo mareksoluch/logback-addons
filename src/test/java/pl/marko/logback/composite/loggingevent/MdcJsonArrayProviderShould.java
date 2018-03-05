@@ -2,14 +2,14 @@ package pl.marko.logback.composite.loggingevent;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.google.common.collect.ImmutableMap;
-import org.junit.Rule;
-import org.junit.Test;
+import com.google.common.collect.Maps;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
@@ -25,8 +25,6 @@ public class MdcJsonArrayProviderShould {
     private static final String SINGE_VALUE_TABLE = "singeValueTable";
     private static final String MULTI_VALUE_TABLE = "multiValueTable";
     private static final String NOT_CONFIGURED_PROPERTY = "notConfiguredProperty";
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
 
     private MdcJsonArrayProvider provider = new MdcJsonArrayProvider();
 
@@ -35,6 +33,11 @@ public class MdcJsonArrayProviderShould {
 
     @Mock
     private ILoggingEvent event;
+
+    @BeforeEach
+    public void setup(){
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Test public void
     convertSingleValueFieldToArray() throws IOException {
@@ -45,6 +48,16 @@ public class MdcJsonArrayProviderShould {
         // then
         verify(generator).writeFieldName(eq(SINGE_VALUE_TABLE));
         verify(generator).writeObject(argThat(containsInAnyOrder("a")));
+    }
+
+    @Test public void
+    shouldNotWriteValuesIfMdcValueNull() throws IOException {
+        // given
+        mdcEntryInEvent(SINGE_VALUE_TABLE, null);
+        // when
+        provider.writeTo(generator, event);
+        // then
+        verifyNoMoreInteractions(generator);
     }
 
     @Test public void
@@ -92,7 +105,9 @@ public class MdcJsonArrayProviderShould {
     }
 
     private Map<String, String> map(String key, String value) {
-        return ImmutableMap.of(key, value);
+        HashMap<String, String> mdcMap = Maps.newHashMap();
+        mdcMap.put(key, value);
+        return mdcMap;
     }
 
     private void mdcEntryInEvent(String key, String value) {

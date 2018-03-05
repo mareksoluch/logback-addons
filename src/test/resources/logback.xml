@@ -4,7 +4,9 @@
         <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
             <providers>
                 <provider class="pl.marko.logback.composite.loggingevent.MdcJsonArrayProvider">
-                    <arrayFieldName>arraKey</arrayFieldName>
+                    <arrayFieldName>arraKey1</arrayFieldName>
+                    <arrayFieldName>arraKey2</arrayFieldName>
+                    <arrayFieldName>arraKey3</arrayFieldName>
                 </provider>
                 <provider class="pl.marko.logback.composite.loggingevent.MdcJsonNestedObjectProvider"/>
                 <provider class="net.logstash.logback.composite.ContextJsonProvider"/>
@@ -15,8 +17,7 @@
                         "message": "%message",
                         "logger": "%logger",
                         "thread": "%thread",
-                        "level": "%level",
-                        "appId": "some_app_id"
+                        "level": "%level"
                         }
                     </pattern>
                 </pattern>
