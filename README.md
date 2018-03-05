@@ -1,3 +1,5 @@
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 # json-logback-providers
 This is a pack of json providers providing some additional features to logtash logback encoder.
 
