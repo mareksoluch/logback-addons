@@ -82,17 +82,6 @@ public class MdcJsonArrayProviderShould {
     }
 
     @Test public void
-    convertMultiValueFieldToArray1() throws IOException {
-        // given
-        mdcEntryInEvent("asdsaad  dfsds", "a,b,c,d");
-        // when
-        provider.writeTo(generator, event);
-        // then
-        verify(generator).writeFieldName(eq(MULTI_VALUE_TABLE));
-        verify(generator).writeObject(argThat(containsInAnyOrder("a", "b", "c", "d")));
-    }
-
-    @Test public void
     notConvertToArrayIfFieldNotConfigured() throws IOException {
         // given
         willReturn(map(NOT_CONFIGURED_PROPERTY, "e,f,g,h")).given(event).getMDCPropertyMap();
