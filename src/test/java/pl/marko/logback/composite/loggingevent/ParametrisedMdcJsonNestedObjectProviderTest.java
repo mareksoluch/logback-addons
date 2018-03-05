@@ -43,10 +43,7 @@ public class ParametrisedMdcJsonNestedObjectProviderTest {
         generator = FACTORY.createGenerator(writer);
     }
 
-
     private static Stream<Arguments> parameters() {
-
-
         return Stream.of(
                 jsonForEmptyMDC("{}"),
                 jsonForMDC("{\"a\":{\"b\":\"value1\",\"c\":{\"d\":{\"e\":\"value2\"}},\"f\":{\"g\":\"value3\"}}}",

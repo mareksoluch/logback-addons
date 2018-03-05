@@ -8,11 +8,13 @@ import net.logstash.logback.fieldnames.LogstashFieldNames;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 abstract class AbstractMdcJsonProvider extends AbstractFieldJsonProvider<ILoggingEvent> implements FieldNamesAware<LogstashFieldNames> {
 
     protected List<String> includeMdcKeyNames = new ArrayList<>();
     protected List<String> excludeMdcKeyNames = new ArrayList<>();
+    private static final Pattern JSON_KEY_PATTERN = Pattern.compile("[a-zA-Z0-9\\.$%&#@!+-=]+");
 
     @Override
     public void start() {
@@ -24,7 +26,26 @@ abstract class AbstractMdcJsonProvider extends AbstractFieldJsonProvider<ILoggin
 
     @Override
     public void writeTo(JsonGenerator generator, ILoggingEvent event) throws IOException {
-        logMDC(generator, event.getMDCPropertyMap());
+        logMDC(generator, filterValidKeys(event.getMDCPropertyMap()));
+    }
+
+    private Map<String, String> filterValidKeys(Map<String, String> mdcPropertyMap) {
+        if(mdcPropertyMap==null)
+            return null;
+        else {
+            Map<String, String> filteredMap = new HashMap<>();
+            mdcPropertyMap.forEach((k,v) -> {
+                if(keyValid(k)){
+                    filteredMap.put(k,v);
+                }
+            });
+            return filteredMap;
+        }
+
+    }
+
+    private boolean keyValid(String key) {
+        return JSON_KEY_PATTERN.matcher(key).matches();
     }
 
     private void logMDC(JsonGenerator generator, Map<String, String> mdcProperties) throws IOException {

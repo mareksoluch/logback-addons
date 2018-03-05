@@ -11,9 +11,9 @@ public class JsonLogginTest {
 
     @Test public void
     jsonProvidersExample() {
-        MDC.put("arraKey1", "singleValue");
-        MDC.put("arraKey2", "one, two, tree");
-        MDC.put("arraKey3", null);
+        MDC.put("arrayKey1", "singleValue");
+        MDC.put("arrayKey2", "one, two, tree");
+        MDC.put("arrayKey3", null);
         MDC.put("root.one", "one");
         MDC.put("root.two", "2");
         MDC.put("root.tree", "trzy");

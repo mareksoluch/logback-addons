@@ -1,22 +1,45 @@
-[![Build Status](https://travis-ci.org/mareksoluch/json-extractor.svg?branch=master)](https://travis-ci.org/mareksoluch/json-extractor)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[ ![Download](https://api.bintray.com/packages/mareksoluch/maven/json-extractor/images/download.svg) ](https://bintray.com/mareksoluch/maven/json-extractor/_latestVersion)
+# json-logback-providers
+This is a pack of json providers providing some additional features to logtash logback encoder.
 
-# json-extractor
-This is a simple library that provides possibility to extract json field values basing on fields' names.
-Algorithm of fields selections is either extract all fields or base on regular expressions that match to fields' names.
+# MdcJsonArrayProvider
+Converts MDC values to array. Values are split with  `,` separator. Only values of implicitly defined keys (via `arrayFieldName`) are transformed.
 
-# Usage
-Extract all fields' values:
-```java
-JsonNode jsonNode = loadJson();
-Stream<Object> values = JsonExtractor.allFields().extract(jsonNode);
-values.forEach(value -> LOG.debug("Extracted value: {}", value));
+All keys not matching regex `[a-zA-Z0-9\.$%&#@!+-=]+` will be ignored.
+
+Sample config:
+```xml
+<provider class="pl.marko.logback.composite.loggingevent.MdcJsonArrayProvider">
+    <arrayFieldName>mdcKey</arrayFieldName>
+</provider>
 ```
 
-Extract fields' values that match patterns:
-```java
-JsonNode jsonNode = loadJson();
-Stream<Object> values = JsonExtractor.byPattern(".*Id.*", ".*name.*").extract(jsonNode);
-values.forEach(value -> LOG.debug("Extracted value: {}", value));
+# MdcJsonNestedObjectProvider
+Convers MDC map to nested object. Path of a nested object is encoded in MDC property keys. Each path element is separated with `.`.
+
+For MDC map:
+```
+a.b.c : value1
+a.d : value2
+e.f : value3
+```
+Following json will be written:
+```json
+{
+  "a" : {
+    "b" : {
+      "c" : "value1"
+    },
+    "d" : "value2"    
+  },
+  "e" : {
+    "f" : "value3"
+  }
+}
+```
+
+All keys not matching regex `[a-zA-Z0-9\.$%&#@!+-=]+` will be ignored.
+
+Sample config:
+```xml
+<provider class="pl.marko.logback.composite.loggingevent.MdcJsonNestedObjectProvider"/>
 ```

@@ -16,6 +16,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 public class MdcJsonNestedObjectProviderShould {
 
@@ -46,6 +47,16 @@ public class MdcJsonNestedObjectProviderShould {
         inOrder.verify(generator).writeFieldName(eq("b"));
         inOrder.verify(generator).writeObject(eq("value"));
         inOrder.verify(generator).writeEndObject();
+    }
+
+    @Test public void
+    notWriteObjectIfKeyInvalid() throws IOException {
+        // given
+        mdcEntryInEvent("a.b'c", "value");
+        // when
+        provider.writeTo(generator, event);
+        // then
+        verifyNoMoreInteractions(generator);
     }
 
     @Test public void

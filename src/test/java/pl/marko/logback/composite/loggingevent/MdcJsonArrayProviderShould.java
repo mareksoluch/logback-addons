@@ -61,9 +61,30 @@ public class MdcJsonArrayProviderShould {
     }
 
     @Test public void
+    shouldNotWriteValuesIfMdcKeyInvalid() throws IOException {
+        // given
+        mdcEntryInEvent("a string with space", "a");
+        // when
+        provider.writeTo(generator, event);
+        // then
+        verifyNoMoreInteractions(generator);
+    }
+
+    @Test public void
     convertMultiValueFieldToArray() throws IOException {
         // given
         mdcEntryInEvent(MULTI_VALUE_TABLE, "a,b,c,d");
+        // when
+        provider.writeTo(generator, event);
+        // then
+        verify(generator).writeFieldName(eq(MULTI_VALUE_TABLE));
+        verify(generator).writeObject(argThat(containsInAnyOrder("a", "b", "c", "d")));
+    }
+
+    @Test public void
+    convertMultiValueFieldToArray1() throws IOException {
+        // given
+        mdcEntryInEvent("asdsaad  dfsds", "a,b,c,d");
         // when
         provider.writeTo(generator, event);
         // then
