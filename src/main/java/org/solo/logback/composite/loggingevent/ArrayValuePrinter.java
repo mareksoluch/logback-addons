@@ -1,4 +1,4 @@
-package pl.marko.logback.composite.loggingevent;
+package org.solo.logback.composite.loggingevent;
 
 import java.util.Collection;
 

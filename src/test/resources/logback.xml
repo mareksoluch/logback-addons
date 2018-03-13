@@ -3,12 +3,12 @@
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
             <providers>
-                <provider class="pl.marko.logback.composite.loggingevent.MdcJsonArrayProvider">
+                <provider class="org.solo.logback.composite.loggingevent.MdcJsonArrayProvider">
                     <arrayFieldName>arrayKey1</arrayFieldName>
                     <arrayFieldName>arrayKey2</arrayFieldName>
                     <arrayFieldName>arrayKey3</arrayFieldName>
                 </provider>
-                <provider class="pl.marko.logback.composite.loggingevent.MdcJsonNestedObjectProvider"/>
+                <provider class="org.solo.logback.composite.loggingevent.MdcJsonNestedObjectProvider"/>
                 <provider class="net.logstash.logback.composite.ContextJsonProvider"/>
                 <pattern>
                     <pattern>

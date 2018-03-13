@@ -1,4 +1,4 @@
-package pl.marko.logback.composite.loggingevent;
+package org.solo.logback.composite.loggingevent;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.fasterxml.jackson.core.JsonFactory;
