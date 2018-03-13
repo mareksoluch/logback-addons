@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/mareksoluch/logback-addons.svg?branch=master)](https://travis-ci.org/mareksoluch/logback-addons)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+ [ ![Download](https://api.bintray.com/packages/mareksoluch/maven/logback-addons/images/download.svg?version=0.2) ](https://bintray.com/mareksoluch/maven/logback-addons/0.2/link)
 
 # json-logback-providers
 This is a pack of json providers providing some additional features to logtash logback encoder.
