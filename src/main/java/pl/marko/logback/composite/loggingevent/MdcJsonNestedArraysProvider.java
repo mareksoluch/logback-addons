@@ -5,24 +5,24 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-public class MdcJsonArrayProvider extends AbstractMdcJsonProvider {
+public class MdcJsonNestedArraysProvider extends MdcJsonNestedObjectProvider {
 
+    private String arraySeparator = ",";
     private List<String> arrayFieldNames = new ArrayList<>();
     private final ArrayValuePrinter arrayValuePrinter = new ArrayValuePrinter();
-    private String arraySeparator = ",";
+
+    public MdcJsonNestedArraysProvider() {
+        super(true);
+    }
+
+    public MdcJsonNestedArraysProvider(boolean printNestedObjects) {
+        super(printNestedObjects);
+    }
 
     @Override
-    void writeProperties(JsonGenerator generator, Map<String, String> mdcProperties) throws IOException {
-        for (Map.Entry<String, String> entry : mdcProperties.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            if (key != null && value != null) {
-                generator.writeFieldName(key);
-                generator.writeObject(arrayValuePrinter.printValue(key, value, arrayFieldNames, arraySeparator));
-            }
-        }
+    protected void writeJsonValue(JsonGenerator generator, String jsonName, String jsonValue) throws IOException {
+        generator.writeObjectField(jsonName, arrayValuePrinter.printValue(jsonName, jsonValue, arrayFieldNames, arraySeparator));
     }
 
     public void addArrayFieldName(String fieldName) {

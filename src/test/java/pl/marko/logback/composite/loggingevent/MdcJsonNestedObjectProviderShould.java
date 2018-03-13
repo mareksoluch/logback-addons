@@ -106,6 +106,22 @@ public class MdcJsonNestedObjectProviderShould {
         inOrder.verify(generator, times(2)).writeEndObject();
     }
 
+    @Test public void
+    notWriteNestedObjectIfDisabled() throws IOException {
+        // given
+        provider.setPrintNestedObjects(false);
+        Map<String, String> mdcProperties = ImmutableMap.of(
+                "a.b", "value1");
+        willReturn(mdcProperties).given(event).getMDCPropertyMap();
+
+        InOrder inOrder = inOrder(generator);
+        // when
+        provider.writeTo(generator, event);
+        // then
+        inOrder.verify(generator).writeFieldName(eq("a.b"));
+        inOrder.verify(generator).writeObject(eq("value1"));
+    }
+
     private void mdcEntryInEvent(String key, String value) {
         willReturn(ImmutableMap.of(key, value)).given(event).getMDCPropertyMap();
     }

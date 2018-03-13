@@ -25,7 +25,7 @@ public class ParametrisedMdcJsonNestedObjectProviderTest {
 
     private final static JsonFactory FACTORY = new MappingJsonFactory().enable(JsonGenerator.Feature.ESCAPE_NON_ASCII);
 
-    private MdcJsonNestedObjectProvider provider = new MdcJsonNestedObjectProvider();
+    private final MdcJsonNestedObjectProvider provider;
 
     private final StringWriter writer;
     private final JsonGenerator generator;
@@ -41,6 +41,7 @@ public class ParametrisedMdcJsonNestedObjectProviderTest {
     ParametrisedMdcJsonNestedObjectProviderTest() throws IOException {
         writer = new StringWriter();
         generator = FACTORY.createGenerator(writer);
+        provider = new MdcJsonNestedObjectProvider();
     }
 
     private static Stream<Arguments> parameters() {
@@ -56,7 +57,10 @@ public class ParametrisedMdcJsonNestedObjectProviderTest {
                         "a.f.g", "value3"),
                 jsonForMDC("{\"a\":{\"b\":\"value1\",\"c\":{\"a\":{\"e\":\"value2\"}}}}",
                         "a.b", "value1",
-                        "a.c.a.e", "value2")
+                        "a.c.a.e", "value2"),
+                jsonForMDC("{\"a\":\"value1\",\"b\":\"value2\"}",
+                        "a", "value1",
+                        "b", "value2")
         );
     }
 

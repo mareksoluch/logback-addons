@@ -3,40 +3,50 @@ package pl.marko.logback.composite.loggingevent;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
 public class MdcJsonNestedObjectProvider extends AbstractMdcJsonProvider {
 
-    private final static String NESTED_OBJECT_SEPARATOR = ".";
     private static final String NESTED_OBJECT_SEPARATOR_REGEX = "\\.";
-    private boolean mapToNestedObjects = false;
+    private boolean printNestedObjects;
 
-
-    private TreeNode convertToNestedObjects(Map<String, String> properties) {
-
-        Map<String, LinkedList<String>> nestedObjectProperties = properties.keySet().stream()
-                .filter(key -> key.contains(NESTED_OBJECT_SEPARATOR))
-                .collect(toMap(key -> key, key -> new LinkedList<>(asList(key.split(NESTED_OBJECT_SEPARATOR_REGEX)))));
-
-        return groupByPath(nestedObjectProperties);
+    public MdcJsonNestedObjectProvider() {
+        this(true);
     }
 
-    private TreeNode groupByPath(Map<String, LinkedList<String>> nestedObjectProperties) {
-        TreeNode root = new TreeNode(null);
-        nestedObjectProperties.forEach((pathString,pathList) -> buildTree(root, pathString, pathList));
-        return root;
+    public MdcJsonNestedObjectProvider(boolean printNestedObjects) {
+        this.printNestedObjects = printNestedObjects;
     }
 
     @Override
     void writeProperties(JsonGenerator generator, Map<String, String> mdcProperties) throws IOException {
         writeTree(generator, convertToNestedObjects(mdcProperties), mdcProperties);
         generator.flush();
+    }
+
+    private List<String> getPath(String key) {
+        return printNestedObjects
+                ? new LinkedList<>(asList(key.split(NESTED_OBJECT_SEPARATOR_REGEX)))
+                : singletonList(key);
+    }
+
+    private TreeNode groupByPath(Map<String, List<String>> nestedObjectProperties) {
+        TreeNode root = new TreeNode(null);
+        nestedObjectProperties.forEach((pathString,pathList) -> buildTree(root, pathString, pathList));
+        return root;
+    }
+
+    private TreeNode convertToNestedObjects(Map<String, String> properties) {
+
+        Map<String, List<String>> nestedObjectProperties = properties.keySet().stream()
+                .collect(toMap(identity(), this::getPath));
+
+        return groupByPath(nestedObjectProperties);
     }
 
 
@@ -64,17 +74,21 @@ public class MdcJsonNestedObjectProvider extends AbstractMdcJsonProvider {
                 writeTree(generator, childNode, mdcProperties);
                 generator.writeEndObject();
             } else {
-                generator.writeObjectField(propertyKey, mdcProperties.get(childNode.fullPath));
+                writeJsonValue(generator, propertyKey, mdcProperties.get(childNode.fullPath));
             }
         }
     }
 
-    public boolean isMapToNestedObjects() {
-        return mapToNestedObjects;
+    protected void writeJsonValue(JsonGenerator generator, String jsonName, String jsonValue) throws IOException {
+        generator.writeObjectField(jsonName, jsonValue);
     }
 
-    public void setMapToNestedObjects(boolean mapToNestedObjects) {
-        this.mapToNestedObjects = mapToNestedObjects;
+    public boolean isPrintNestedObjects() {
+        return printNestedObjects;
+    }
+
+    public void setPrintNestedObjects(boolean printNestedObjects) {
+        this.printNestedObjects = printNestedObjects;
     }
 
 
