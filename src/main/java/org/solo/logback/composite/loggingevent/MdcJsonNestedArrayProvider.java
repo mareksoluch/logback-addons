@@ -6,23 +6,23 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MdcJsonNestedArraysProvider extends MdcJsonNestedObjectProvider {
+public class MdcJsonNestedArrayProvider extends MdcJsonNestedObjectProvider {
 
     private String arraySeparator = ",";
     private List<String> arrayFieldNames = new ArrayList<>();
     private final ArrayValuePrinter arrayValuePrinter = new ArrayValuePrinter();
 
-    public MdcJsonNestedArraysProvider() {
+    public MdcJsonNestedArrayProvider() {
         super(true);
     }
 
-    public MdcJsonNestedArraysProvider(boolean printNestedObjects) {
+    public MdcJsonNestedArrayProvider(boolean printNestedObjects) {
         super(printNestedObjects);
     }
 
     @Override
-    protected void writeJsonValue(JsonGenerator generator, String jsonName, String jsonValue) throws IOException {
-        generator.writeObjectField(jsonName, arrayValuePrinter.printValue(jsonName, jsonValue, arrayFieldNames, arraySeparator));
+    protected void writeJsonValue(JsonGenerator generator, String jsonName, String jsonValue, String jsonPath) throws IOException {
+        generator.writeObjectField(jsonName, arrayValuePrinter.printValue(jsonPath, jsonValue, arrayFieldNames, arraySeparator));
     }
 
     public void addArrayFieldName(String fieldName) {

@@ -74,12 +74,12 @@ public class MdcJsonNestedObjectProvider extends AbstractMdcJsonProvider {
                 writeTree(generator, childNode, mdcProperties);
                 generator.writeEndObject();
             } else {
-                writeJsonValue(generator, propertyKey, mdcProperties.get(childNode.fullPath));
+                writeJsonValue(generator, propertyKey, mdcProperties.get(childNode.fullPath), childNode.fullPath);
             }
         }
     }
 
-    protected void writeJsonValue(JsonGenerator generator, String jsonName, String jsonValue) throws IOException {
+    protected void writeJsonValue(JsonGenerator generator, String jsonName, String jsonValue, String jsonPath) throws IOException {
         generator.writeObjectField(jsonName, jsonValue);
     }
 

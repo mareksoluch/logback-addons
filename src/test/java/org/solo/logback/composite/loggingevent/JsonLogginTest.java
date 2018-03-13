@@ -18,6 +18,7 @@ public class JsonLogginTest {
         MDC.put("root.two", "2");
         MDC.put("root.tree", "trzy");
 
+        MDC.put("a.b.c", "a,r,r,a,y");
         MDC.put("a.b", "value1");
         MDC.put("a.c.d.e", "value2");
         MDC.put("a.f.g", "value3");
